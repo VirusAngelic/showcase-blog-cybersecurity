@@ -1,4 +1,10 @@
-import './globals.css'
+'use client'
+import {CacheProvider} from "@chakra-ui/next-js";
+import {ChakraProvider, ColorModeScript} from "@chakra-ui/react";
+import {mainTheme} from "@/app/styles/theme/theme";
+import React from "react";
+import '@fontsource/inter/variable.css'
+import '@fontsource/noto-mono/'
 
 export default function RootLayout({
   children,
@@ -12,7 +18,12 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>{children}</body>
+      <body>
+      <ColorModeScript initialColorMode={mainTheme.config.initialColorMode} />
+        <CacheProvider>
+            <ChakraProvider theme={mainTheme}>{children}</ChakraProvider>
+        </CacheProvider>
+      </body>
     </html>
   )
 }

@@ -1,91 +1,63 @@
+'use client'
+
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+import {border, Card, ChakraProvider, IconButton, StackDivider, useColorMode, VStack} from "@chakra-ui/react"
+import {CacheProvider} from "@chakra-ui/next-js"
+import React, {useState, useEffect} from "react";
+import {Box, SimpleGrid, Center, Text, Container} from "@chakra-ui/react";
+import {BarNavigationComponent} from "@/app/components/NavigationComponents/BarNavigationComponent";
+import {SunIcon} from "@chakra-ui/icons";
+import {BlogsFeedComponent} from "@/app/components/BlogsFeedComponent/BlogsFeedComponent";
+import {PostComponent} from "@/app/components/BlogsFeedComponent/PostComponent";
+import axios from "axios";
+import {PostMockData} from "@/app/model";
+import {CategoriesNavigationComponent} from "@/app/components/NavigationComponents/CategoriesNavigationComponent";
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+export default function Home(){
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
+    const { colorMode, toggleColorMode } = useColorMode();
+    const [ mockData, setMockData ] = useState <Array<PostMockData>>([]);
 
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+    useEffect(()=>{
+        const axiosRequest = axios.get('http://localhost:3000/api/mockposts');
+        axiosRequest.then((axiosResponse)=> {
+            const arrayData: Array<PostMockData> = Object.values(axiosResponse.data);
+            setMockData(arrayData);
+        })
+    })
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    return (
+        <main>
+            <VStack p={8} spacing={6}>
+            <Center>
+                <Box >
+                    <IconButton aria-label={'Cambiar tema'} icon={<SunIcon/>} onClick={toggleColorMode}/>
+                </Box>
+            </Center>
+            <SimpleGrid columns={1} spacing={10} padding='20' bg="primary">
+                <Box w={[100, 300, 500, 1800]}>
+                    <BarNavigationComponent></BarNavigationComponent>
+                </Box>
+            </SimpleGrid>
+                <SimpleGrid columns={2}>
+                    <Box paddingRight={300} paddingLeft={30} maxWidth={900} maxH={900} alignContent={'flex-start'}>
+                        {
+                            mockData?.length > 0 ?
+                                <PostComponent titulo={mockData[0].titulo } fecha={mockData[0].fecha}
+                                           imagen={mockData[0].imagen} descripcion={mockData[0].descripcion}/>
+                                : null
+                        }
+                    </Box>
+                    <CategoriesNavigationComponent/>
+                </SimpleGrid>
+                <Container maxWidth={'7xl'} brightness={'10%'} textAlign={"left"} paddingBottom={[5, 10, 50]}>
+                    <Text fontSize={['xl', '5xl', '7xl']}>Ultimas entradas blog</Text>
+                </Container>
+                <BlogsFeedComponent></BlogsFeedComponent>
+            </VStack>
+        </main>
+    );
 }
