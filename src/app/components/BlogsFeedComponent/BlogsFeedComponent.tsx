@@ -8,7 +8,7 @@ import {
     GridItem,
     Select,
     SimpleGrid,
-    Stack,
+    Stack, Text,
     VStack
 } from '@chakra-ui/react'
 import {PostComponent} from "@/app/components/BlogsFeedComponent/PostComponent";
@@ -24,6 +24,7 @@ import {
 import axios, {AxiosResponse} from "axios";
 import {PostMockData} from "@/app/model";
 import './BlogsFeedStyles.css';
+import {AccountCircle, Business, MilitaryTech} from "@mui/icons-material";
 
 export function BlogsFeedComponent() {
 
@@ -65,10 +66,12 @@ export function BlogsFeedComponent() {
         setGlobalPageSize(pageSize);
     }
 
+    // Callback para cambio de pagina
     const handlePageChange = (nextPage: number) =>{
         setCurrentPage(nextPage);
     }
 
+    // Obtencion de datos del feed con api mock
     useEffect( ()=>{
             const axiosRequest = axios.get('http://localhost:3000/api/mockposts');
             axiosRequest.then((axiosData) =>{
@@ -80,8 +83,14 @@ export function BlogsFeedComponent() {
         ,[currentPage]);
 
     return (
-        <Container p={3} bg={'tomato'}>
-            <VStack spacing={3}>
+        <SimpleGrid w={'full'} columns={2} spacing={"1"}>
+            <VStack w={'10%'} spacing={"1"} flexDirection={'column'} alignContent={'center'} blur={'md'}>
+                <Text fontSize={'5xl'}>Topics</Text>
+                <Business sx={{fontSize: '500'}}/>
+                <AccountCircle sx={{fontSize: '500'}}/>
+                <MilitaryTech sx={{fontSize: '500'}}/>
+            </VStack>
+            <VStack w={'full'} spacing={3}>
                 <Box bg={'transparent'} w={'100%'} p={6}>
                     <Grid templateColumns={'repeat(5, 1fr)'} gap={4}>
                         <GridItem colSpan={2} h={10}>
@@ -161,6 +170,6 @@ export function BlogsFeedComponent() {
                     </Grid>
                 }
             </VStack>
-        </Container>
+        </SimpleGrid>
 );
 }
